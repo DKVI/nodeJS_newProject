@@ -3,36 +3,29 @@
     <div class="col-md-6">
       <div class="card mt-5">
         <div class="card-body">
-          <h3 class="card-title text-center">Course Registration</h3>
-          <form method="POST" action="/courses/store">
+          <h3 class="card-title text-center">Register</h3>
+          <form action="/register/done" method="POST">
             <div class="form-group">
-              <label for="name">Course Name</label>
+              <label for="name">Name</label>
               <input type="text" class="form-control" id="name" name="name" />
             </div>
             <div class="form-group">
-              <label for="description">Course Description</label>
-              <textarea
-                class="form-control"
-                id="description"
-                name="description"
-              ></textarea>
-            </div>
-            <div class="form-group">
-              <label for="videoId">Video ID</label>
+              <label for="email">Email address</label>
               <input
-                type="text"
+                type="email"
                 class="form-control"
-                id="videoId"
-                name="videoId"
+                id="email"
+                name="email"
               />
             </div>
             <div class="form-group">
-              <label for="level">Level</label>
-              <select class="form-control" id="level" name="level">
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
+              <label for="password">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+              />
             </div>
             <button
               type="submit"
