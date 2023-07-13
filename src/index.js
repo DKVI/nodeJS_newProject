@@ -2,6 +2,7 @@
 
 const express = require("express");
 const morgan = require("morgan");
+const methodOverride = require("method-override");
 require("dotenv").config();
 const handlebars = require("express-handlebars").engine;
 const app = express();
@@ -18,8 +19,16 @@ console.log(__dirname);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(methodOverride("_method"));
 
-app.engine("handlebars", handlebars());
+app.engine(
+  "handlebars",
+  handlebars({
+    helpers: {
+      sum: (a, b) => a + b,
+    },
+  })
+);
 
 app.set("view engine", "handlebars");
 
