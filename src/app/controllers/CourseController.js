@@ -69,6 +69,16 @@ class CoursesController {
       .then(() => res.redirect("back"))
       .catch(next);
   }
+
+  // [DELETE] /courses/multiple-delete
+  async multipleDelete(req, res, next) {
+    const data = { ...req.body };
+    console.log(data);
+    for (const index in data) {
+      await Course.delete({ _id: data[index] });
+    }
+    res.redirect("back");
+  }
 }
 
 module.exports = new CoursesController();

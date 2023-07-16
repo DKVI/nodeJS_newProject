@@ -1,8 +1,9 @@
 <div class="container">
   <h1>Khóa học của tôi</h1>
-  {{#if count}}
-    <a href="/me/trash/courses">🗑️ Thùng rác {{count}}</a>
+  {{#if countDeleted}}
+    <a href="/me/trash/courses">🗑️ Thùng rác {{countDeleted}}</a>
   {{/if}}
+  <p>{{countUnDeleted}}</p>
   <table class="table">
     <thead>
       <tr>
@@ -17,7 +18,8 @@
       {{#each courses}}
 
         <tr>
-          <th scope="row">{{sum @index 1}}</th>
+          <th scope="row"><input type="checkbox" id="checkbox" name="{{this._id}}" />
+            {{sum @index 1}}</th>
           <td>{{this.name}}</td>
           <td>{{this.description}}</td>
           <td>{{this.level}}</td>
@@ -43,6 +45,19 @@
       {{/each}}
     </tbody>
   </table>
+  <table class="table">
+    <th scope="row">
+      Check All
+      <input type="checkbox" name="checkAll" id="" />
+    </th>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td><form class="final-submit-form">
+        <button type="submit" class="btn btn-primary final-remove-btn">Xóa</button>
+      </form></td>
+  </table>
+
 </div>
 
 <form>
@@ -84,11 +99,75 @@
 </form>
 
 <script>
+  const idList = [];
+  const distinctValues = function (value, array) {
+    array.forEach ((item, index) => {
+      if (item === value) {
+        array.splice(index, 1);
+      }
+      else return;
+    })
+  }
+  const convertToReqBody = function (array) {
+    let reqBody = {};
+    array.forEach ((item, index) => {
+      reqBody[index] = item;
+    })
+    return reqBody;
+  }
   const deleteBtn = document.querySelectorAll('.delete-course-btn'); const
   formSubmit = document.querySelector('form'); deleteBtn.forEach(btn => {
-  btn.addEventListener('click', function(e) { const courseId =
-  e.target.dataset.courseId; formSubmit.action =
-  `/courses/${courseId}?_method=PATCH`; formSubmit.method = 'POST'; }) })
+  btn.addEventListener('click', function(e) { 
+    const courseId = e.target.dataset.courseId; 
+    formSubmit.action = `/courses/${courseId}?_method=PATCH`; 
+    formSubmit.method = 'POST'; 
+  }) 
+  })
   formSubmit.addEventListener('submit', function(e) { e.preventDefault();
-  formSubmit.submit();  })
+  formSubmit.submit(); }) 
+  const checkAllBtn = document.querySelector('input[name="checkAll"]'); 
+  const checkboxes = document.querySelectorAll('#checkbox'); 
+  checkboxes.forEach ((item) => {
+    item.addEventListener('change', function(e) {
+        if (e.target.checked) {
+        idList.push(e.target.name);
+      } else {
+        idList.pop(e.target.name);
+      }
+      console.log (idList);
+    })
+  })
+  console.log (checkAllBtn);
+  checkAllBtn.onchange = () => {
+
+    if (checkAllBtn.checked) {
+        checkboxes.forEach ((item) => {
+            item.checked = true;
+            distinctValues(item.name, idList); 
+            idList.push(item.name);
+        })
+    } 
+    else {
+      checkboxes.forEach ((item) => {
+            item.checked = false;
+            distinctValues(item.name, idList); 
+            idList.pop(item.name);
+        })
+    }
+        console.log (idList);
+  }
+    const finalSubmitForm = document.querySelector(".final-submit-form");  
+    const finalRemoveBtn = document.querySelector(".final-remove-btn");
+    finalRemoveBtn.onclick = async () => {
+      if (idList.length) {
+        const reqBody = convertToReqBody(idList);
+        await fetch (`/courses/multiple-delete`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reqBody),
+        })
+      }
+    }
 </script>
